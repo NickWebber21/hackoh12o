@@ -24,4 +24,3 @@ npm install @react-google-maps/api axios
 
 ## map stuff
 npm install react-leaflet leaflet
->>>>>>> main
