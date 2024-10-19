@@ -14,15 +14,9 @@ function App() {
         startLocation: startingPoint,
         endLocation: destination,
       });
-<<<<<<< HEAD
-
       // Update state with the results
       setResult1(`Uber: $${response.data.uber.price.toFixed(2)} | Distance: ${response.data.uber.distance} | Duration: ${response.data.uber.duration}`);
       setResult2(`Lyft: $${response.data.lyft.price.toFixed(2)} | Distance: ${response.data.lyft.distance} | Duration: ${response.data.lyft.duration}`);
-=======
-      setResult1(response.data.uber);
-      setResult2(response.data.lyft);
->>>>>>> styling/frontend
     } catch (error) {
       console.error('Error fetching data:', error);
     }
