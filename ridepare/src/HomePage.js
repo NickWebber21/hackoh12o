@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaMapMarkerAlt, FaRoute, FaExchangeAlt, FaCar, FaSpinner } from 'react-icons/fa';
+import { Autocomplete } from '@react-google-maps/api';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
@@ -41,7 +42,7 @@ function HomePage() {
             Find the best ride for your journey. Enter your locations below.
           </p>
           <div className="space-y-6">
-            <InputField
+            <AutocompleteInput
               id="input1"
               label="Starting Point"
               value={startingPoint}
@@ -61,7 +62,7 @@ function HomePage() {
               </div>
             </div>
 
-            <InputField
+            <AutocompleteInput
               id="input2"
               label="Destination"
               value={destination}
@@ -89,7 +90,20 @@ function HomePage() {
   );
 }
 
-function InputField({ id, label, value, onChange, icon }) {
+function AutocompleteInput({ id, label, value, onChange, icon }) {
+  const [autocomplete, setAutocomplete] = useState(null);
+
+  const onLoad = (autocomplete) => {
+    setAutocomplete(autocomplete);
+  };
+
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      onChange(place.formatted_address);
+    }
+  };
+
   return (
     <div>
       <label htmlFor={id} className="block text-lg font-medium text-neutral mb-2">
@@ -99,16 +113,21 @@ function InputField({ id, label, value, onChange, icon }) {
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           {icon}
         </div>
-        <input
-          type="text"
-          id={id}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full pl-10 pr-3 py-3 border border-neutral rounded-lg shadow-sm
-                     focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent
-                     text-lg bg-white text-accent"
-          placeholder={`Enter ${label.toLowerCase()}`}
-        />
+        <Autocomplete
+          onLoad={onLoad}
+          onPlaceChanged={onPlaceChanged}
+        >
+          <input
+            type="text"
+            id={id}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-full pl-10 pr-3 py-3 border border-neutral rounded-lg shadow-sm
+                       focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent
+                       text-lg bg-white text-accent"
+            placeholder={`Enter ${label.toLowerCase()}`}
+          />
+        </Autocomplete>
       </div>
     </div>
   );
