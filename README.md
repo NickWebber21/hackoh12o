@@ -21,3 +21,7 @@ npm install react-router-dom
 npm install react-icons
 npm install @tailwindcss/forms @tailwindcss/aspect-ratio @tailwindcss/line-clamp
 npm install @react-google-maps/api axios
+
+## map stuff
+npm install react-leaflet leaflet
+>>>>>>> main
