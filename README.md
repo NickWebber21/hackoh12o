@@ -23,3 +23,6 @@ npm install @tailwindcss/forms @tailwindcss/aspect-ratio @tailwindcss/line-clamp
 
 ## map stuff
 npm install react-leaflet leaflet
+
+## autocomplete
+npm install @react-google-maps/api
