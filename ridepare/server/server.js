@@ -5,6 +5,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Define a root route
+app.get('/', (req, res) => {
+  res.send('Welcome to the RidePare API!'); // Respond with a simple message
+});
+
+// Define a POST endpoint to compare prices
 app.post('/compare', (req, res) => {
   const { startLocation, endLocation } = req.body;
 
