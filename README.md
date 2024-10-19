@@ -17,3 +17,6 @@ code on that thang
 ## maybe
 npm install postcss-cli autoprefixer
 npm install postcss-cli autoprefixer --save-dev
+npm install react-router-dom
+npm install react-icons
+npm install @tailwindcss/forms
