@@ -5,6 +5,13 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+// Load Poppins font
+const link = document.createElement('link');
+link.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap';
+link.rel = 'stylesheet';
+document.head.appendChild(link);
+
 root.render(
   <React.StrictMode>
     <App />
