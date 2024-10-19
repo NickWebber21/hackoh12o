@@ -10,6 +10,10 @@ app.get('/', (req, res) => {
   res.send('Welcome to the RidePare API!'); // Respond with a simple message
 });
 
+app.get('/compare', (req, res) => {
+  res.send('Please use a POST request to compare prices'); // Respond with a simple message))
+});
+
 // Define a POST endpoint to compare prices
 app.post('/compare', (req, res) => {
   const { startLocation, endLocation } = req.body;
