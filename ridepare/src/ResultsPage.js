@@ -1,61 +1,93 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { FaUber, FaCar, FaClock, FaRoad, FaArrowLeft } from 'react-icons/fa';
 import { SiLyft } from 'react-icons/si';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { iconPerson } from './icon';
 
 function ResultsPage() {
   const location = useLocation();
-  const { results } = location.state || { results: { uber: {}, lyft: {} } };
+  const { results } = location.state || {};
 
-  return (
-      <div className="min-h-screen flex flex-col bg-light bg-hero-pattern">
-        <Navbar />
-        <div className="flex-grow flex items-center justify-center p-4">
-          <div className="container mx-auto max-w-6xl">
-            <div className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
-              <h1 className="text-4xl font-bold text-center mb-10 text-primary">Ride Comparison Results</h1>
+  // Default coordinates (e.g., center of New York City)
+  const defaultLat = 40.7128;
+  const defaultLng = -74.0060;
 
-              <div className="flex flex-col md:flex-row gap-8 justify-center">
-                {/* Results Section */}
-                <div className="md:w-1/2">
-                  <div className="space-y-6">
-                    <ResultField label="Uber" result={results.uber} icon={<FaUber />} />
-                    <ResultField label="Lyft" result={results.lyft} icon={<SiLyft />} />
-                  </div>
-                </div>
+  const [startPosition, setStartPosition] = useState([
+    results?.startLocation?.lat || defaultLat,
+    results?.startLocation?.lng || defaultLng
+  ]);
+  const [endPosition, setEndPosition] = useState([
+    results?.endLocation?.lat || defaultLat + 0.01,
+    results?.endLocation?.lng || defaultLng + 0.01
+  ]);
 
-                {/* Map Section */}
-                <div className="md:w-1/2">
-                  <div className="rounded-lg overflow-hidden shadow-md">
-                    <div
-                      className="h-96"
-                      style={{
-                        background: 'linear-gradient(135deg, #EADEDA 0%, #C4A77D 100%)',
-                        position: 'relative',
-                      }}
-                    >
-                      {/* Fake map markers */}
-                      <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-secondary rounded-full animate-pulse"></div>
-                      <div className="absolute bottom-1/4 right-1/4 w-4 h-4 bg-accent rounded-full animate-pulse"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Link to="/" className="mt-8 inline-flex items-center text-accent hover:text-primary transition-colors duration-300">
-                <FaArrowLeft className="mr-2" />
-                Back to Home
-              </Link>
-            </div>
-          </div>
-        </div>
-        <Footer />
+  if (!results) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-light">
+        <h1 className="text-2xl font-bold text-primary mb-4">No results available</h1>
+        <Link to="/" className="text-accent hover:text-primary transition-colors duration-300">
+          <FaArrowLeft className="inline mr-2" />
+          Back to Home
+        </Link>
       </div>
     );
   }
 
+  return (
+    <div className="min-h-screen flex flex-col bg-light">
+      <Navbar />
+      <div className="flex-grow flex items-center justify-center p-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+            <h1 className="text-4xl font-bold text-center mb-10 text-primary">Ride Comparison Results</h1>
+
+            <div className="flex flex-col md:flex-row gap-8 justify-center">
+              {/* Results Section */}
+              <div className="md:w-1/2">
+                <div className="space-y-6">
+                  <ResultField label="Uber" result={results.uber} icon={<FaUber />} />
+                  <ResultField label="Lyft" result={results.lyft} icon={<SiLyft />} />
+                </div>
+              </div>
+
+              {/* Map Section */}
+              <div className="md:w-1/2">
+                <div className="rounded-lg overflow-hidden shadow-md">
+                  <MapContainer
+                    center={startPosition}
+                    zoom={13}
+                    style={{ height: '400px', width: '100%' }}
+                  >
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    />
+                    <Marker position={startPosition} icon={iconPerson}>
+                      <Popup>Start Location</Popup>
+                    </Marker>
+                    <Marker position={endPosition} icon={iconPerson}>
+                      <Popup>End Location</Popup>
+                    </Marker>
+                  </MapContainer>
+                </div>
+              </div>
+            </div>
+
+            <Link to="/" className="mt-8 inline-flex items-center text-accent hover:text-primary transition-colors duration-300">
+              <FaArrowLeft className="mr-2" />
+              Back to Home
+            </Link>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+}
 
 function ResultField({ label, result, icon }) {
   return (
