@@ -26,10 +26,10 @@ app.post('/compare', async  (req, res) => {
       params: {
         origins: startLocation,
         destinations: endLocation,
-        key: process.env.GOOGLE_API_KEY,
+        key: process.env.REACT_APP_GOOGLE_API_KEY,
       },
     });
-    console.log(process.env.GOOGLE_API_KEY);
+    console.log(process.env.REACT_APP_GOOGLE_API_KEY);
     console.log('Distance Matrix API Response:', distanceMatrixResponse.data);
 
 

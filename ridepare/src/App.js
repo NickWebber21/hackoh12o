@@ -8,7 +8,7 @@ const libraries = ['places'];
 
 function App() {
   return (
-    <LoadScript googleMapsApiKey={process.env.GOOGLE_API_KEY} libraries={libraries}>
+    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_KEY} libraries={libraries}>
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
