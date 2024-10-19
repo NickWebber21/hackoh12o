@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './index.css';
 
 function App() {
   const [startingPoint, setStartingPoint] = useState('');
@@ -7,93 +8,106 @@ function App() {
   const [result1, setResult1] = useState('');
   const [result2, setResult2] = useState('');
 
-  // Function to handle button click
   const handleClick = async () => {
     try {
-      // Make a POST request to your backend
       const response = await axios.post('http://localhost:5000/compare', {
         startLocation: startingPoint,
         endLocation: destination,
       });
+<<<<<<< HEAD
 
       // Update state with the results
       setResult1(`Uber: $${response.data.uber.price.toFixed(2)} | Distance: ${response.data.uber.distance} | Duration: ${response.data.uber.duration}`);
       setResult2(`Lyft: $${response.data.lyft.price.toFixed(2)} | Distance: ${response.data.lyft.distance} | Duration: ${response.data.lyft.duration}`);
+=======
+      setResult1(response.data.uber);
+      setResult2(response.data.lyft);
+>>>>>>> styling/frontend
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
   return (
-    <div className="bg-gray-100 flex items-center justify-center min-h-screen">
-      <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-lg">
-        <h1 className="text-4xl font-bold text-center mb-8">Welcome to RidePare</h1>
+    <div className="bg-gradient-to-br from-primary to-secondary flex items-center justify-center min-h-screen p-4">
+      <div className="bg-white bg-opacity-90 p-8 rounded-2xl shadow-2xl w-full max-w-xl backdrop-blur-sm">
+        <h1 className="text-5xl font-bold text-center mb-10 text-primary">Welcome to RidePare</h1>
 
-        {/* Input Section */}
-        <div className="mb-6">
-          <label htmlFor="input1" className="block text-lg font-medium text-gray-700">
-            Starting Point
-          </label>
-          <input
-            type="text"
+        <div className="space-y-6">
+          <InputField
             id="input1"
+            label="Starting Point"
             value={startingPoint}
-            onChange={(e) => setStartingPoint(e.target.value)} // Update state on input change
-            className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg"
+            onChange={(e) => setStartingPoint(e.target.value)}
           />
-        </div>
 
-        <div className="mb-6">
-          <label htmlFor="input2" className="block text-lg font-medium text-gray-700">
-            Destination
-          </label>
-          <input
-            type="text"
+          <InputField
             id="input2"
+            label="Destination"
             value={destination}
-            onChange={(e) => setDestination(e.target.value)} // Update state on input change
-            className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg"
+            onChange={(e) => setDestination(e.target.value)}
           />
-        </div>
 
-        {/* Enter Button */}
-        <div className="text-center mb-8">
           <button
-            id="enterButton"
-            onClick={handleClick} // Call the handleClick function on button click
-            className="w-full bg-blue-600 text-white text-lg font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50"
+            onClick={handleClick}
+            className="w-full bg-primary text-light text-lg font-semibold py-4 px-6 rounded-lg
+                       hover:bg-accent transition-colors duration-300 ease-in-out
+                       focus:outline-none focus:ring-4 focus:ring-primary focus:ring-opacity-50"
           >
-            Enter
+            Compare Rides
           </button>
-        </div>
 
-        {/* Results Section */}
-        <div className="mb-6">
-          <label htmlFor="result1" className="block text-lg font-medium text-gray-700">
-            Result 1 (Uber)
-          </label>
-          <input
-            type="text"
+          <ResultField
             id="result1"
+            label="Uber Price"
             value={result1}
-            readOnly
-            className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-gray-100 text-lg"
           />
-        </div>
 
-        <div>
-          <label htmlFor="result2" className="block text-lg font-medium text-gray-700">
-            Result 2 (Lyft)
-          </label>
-          <input
-            type="text"
+          <ResultField
             id="result2"
+            label="Lyft Price"
             value={result2}
-            readOnly
-            className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-gray-100 text-lg"
           />
         </div>
       </div>
+    </div>
+  );
+}
+
+function InputField({ id, label, value, onChange }) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-lg font-medium text-neutral mb-2">
+        {label}
+      </label>
+      <input
+        type="text"
+        id={id}
+        value={value}
+        onChange={onChange}
+        className="w-full px-4 py-3 border border-neutral rounded-lg shadow-sm
+                   focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
+                   text-lg bg-white bg-opacity-75 text-accent"
+        placeholder={`Enter ${label.toLowerCase()}`}
+      />
+    </div>
+  );
+}
+
+function ResultField({ id, label, value }) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-lg font-medium text-neutral mb-2">
+        {label}
+      </label>
+      <input
+        type="text"
+        id={id}
+        value={value}
+        readOnly
+        className="w-full px-4 py-3 border border-neutral rounded-lg shadow-sm
+                   bg-light bg-opacity-50 text-lg text-accent font-semibold"
+      />
     </div>
   );
 }
