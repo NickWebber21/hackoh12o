@@ -16,7 +16,9 @@ function HomePage() {
     setTimeout(() => {
       const mockResults = {
         uber: { price: 25.50, distance: "10 km", duration: "15 mins" },
-        lyft: { price: 23.75, distance: "10 km", duration: "15 mins" }
+        lyft: { price: 23.75, distance: "10 km", duration: "15 mins" },
+        startLocation: { lat: 40.7128, lng: -74.0060 }, // Example coordinates (New York City)
+        endLocation: { lat: 40.7484, lng: -73.9857 }   // Example coordinates (Empire State Building)
       };
       setIsLoading(false);
       navigate('/results', { state: { results: mockResults } });
