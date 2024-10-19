@@ -20,6 +20,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "build:css": "postcss src/index.css -o src/tailwind.css",
+    "watch:css": "postcss src/index.css -o src/tailwind.css --watch",
     "dev": "concurrently \"npm start\" \"npm run server\""
   },
   "eslintConfig": {
@@ -41,6 +43,11 @@
     ]
   },
   "devDependencies": {
+<<<<<<< HEAD
     "concurrently": "^9.0.1"
+=======
+    "autoprefixer": "^10.4.20",
+    "postcss-cli": "^11.0.0"
+>>>>>>> styling/frontend
   }
 }
