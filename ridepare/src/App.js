@@ -17,11 +17,10 @@ function App() {
       });
 
       // Update state with the results
-      setResult1(response.data.uber); // Assuming your backend returns an object with `uber`
-      setResult2(response.data.lyft); // Assuming it returns an object with `lyft`
+      setResult1(`Uber: $${response.data.uber.price.toFixed(2)} | Distance: ${response.data.uber.distance} | Duration: ${response.data.uber.duration}`);
+      setResult2(`Lyft: $${response.data.lyft.price.toFixed(2)} | Distance: ${response.data.lyft.distance} | Duration: ${response.data.lyft.duration}`);
     } catch (error) {
       console.error('Error fetching data:', error);
-      // Optionally, handle errors here (e.g., set an error state)
     }
   };
 
