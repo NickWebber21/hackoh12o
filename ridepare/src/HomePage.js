@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaMapMarkerAlt, FaRoute, FaExchangeAlt, FaCar, FaSpinner } from 'react-icons/fa';
+import { Autocomplete } from '@react-google-maps/api';
 import Navbar from './Navbar';
-import Footer from './Footer'; // We'll create this component
+import Footer from './Footer';
 
 function HomePage() {
   const [startingPoint, setStartingPoint] = useState('');
@@ -10,13 +11,14 @@ function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleClick = async () => {
+  const handleClick = () => {
     setIsLoading(true);
-    // Simulate API call
     setTimeout(() => {
       const mockResults = {
         uber: { price: 25.50, distance: "10 km", duration: "15 mins" },
-        lyft: { price: 23.75, distance: "10 km", duration: "15 mins" }
+        lyft: { price: 23.75, distance: "10 km", duration: "15 mins" },
+        startLocation: { lat: 40.7128, lng: -74.0060 },
+        endLocation: { lat: 40.7484, lng: -73.9857 }
       };
       setIsLoading(false);
       navigate('/results', { state: { results: mockResults } });
@@ -40,11 +42,11 @@ function HomePage() {
             Find the best ride for your journey. Enter your locations below.
           </p>
           <div className="space-y-6">
-            <InputField
+            <AutocompleteInput
               id="input1"
               label="Starting Point"
               value={startingPoint}
-              onChange={(e) => setStartingPoint(e.target.value)}
+              onChange={setStartingPoint}
               icon={<FaMapMarkerAlt className="text-accent" />}
             />
 
@@ -60,21 +62,19 @@ function HomePage() {
               </div>
             </div>
 
-            <InputField
+            <AutocompleteInput
               id="input2"
               label="Destination"
               value={destination}
-              onChange={(e) => setDestination(e.target.value)}
+              onChange={setDestination}
               icon={<FaRoute className="text-accent" />}
             />
 
             <button
               onClick={handleClick}
-              disabled={isLoading}
               className="w-full bg-accent text-white text-lg font-semibold py-4 px-6 rounded-lg
                          hover:bg-secondary transition-all duration-300 ease-in-out
                          focus:outline-none focus:ring-4 focus:ring-accent focus:ring-opacity-50
-                         disabled:opacity-50 disabled:cursor-not-allowed
                          flex items-center justify-center"
             >
               {isLoading ? (
@@ -90,8 +90,20 @@ function HomePage() {
   );
 }
 
+function AutocompleteInput({ id, label, value, onChange, icon }) {
+  const [autocomplete, setAutocomplete] = useState(null);
 
-function InputField({ id, label, value, onChange, icon }) {
+  const onLoad = (autocomplete) => {
+    setAutocomplete(autocomplete);
+  };
+
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      onChange(place.formatted_address);
+    }
+  };
+
   return (
     <div>
       <label htmlFor={id} className="block text-lg font-medium text-neutral mb-2">
@@ -101,16 +113,21 @@ function InputField({ id, label, value, onChange, icon }) {
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           {icon}
         </div>
-        <input
-          type="text"
-          id={id}
-          value={value}
-          onChange={onChange}
-          className="w-full pl-10 pr-3 py-3 border border-neutral rounded-lg shadow-sm
-                     focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent
-                     text-lg bg-white text-accent"
-          placeholder={`Enter ${label.toLowerCase()}`}
-        />
+        <Autocomplete
+          onLoad={onLoad}
+          onPlaceChanged={onPlaceChanged}
+        >
+          <input
+            type="text"
+            id={id}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-full pl-10 pr-3 py-3 border border-neutral rounded-lg shadow-sm
+                       focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent
+                       text-lg bg-white text-accent"
+            placeholder={`Enter ${label.toLowerCase()}`}
+          />
+        </Autocomplete>
       </div>
     </div>
   );

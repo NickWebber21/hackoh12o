@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { FaUber, FaCar, FaClock, FaRoad, FaArrowLeft } from 'react-icons/fa';
 import { SiLyft } from 'react-icons/si';
@@ -12,19 +12,6 @@ function ResultsPage() {
   const location = useLocation();
   const { results } = location.state || {};
 
-  // Default coordinates (e.g., center of New York City)
-  const defaultLat = 40.7128;
-  const defaultLng = -74.0060;
-
-  const [startPosition, setStartPosition] = useState([
-    results?.startLocation?.lat || defaultLat,
-    results?.startLocation?.lng || defaultLng
-  ]);
-  const [endPosition, setEndPosition] = useState([
-    results?.endLocation?.lat || defaultLat + 0.01,
-    results?.endLocation?.lng || defaultLng + 0.01
-  ]);
-
   if (!results) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-light">
@@ -36,6 +23,9 @@ function ResultsPage() {
       </div>
     );
   }
+
+  const startPosition = [results.startLocation.lat, results.startLocation.lng];
+  const endPosition = [results.endLocation.lat, results.endLocation.lng];
 
   return (
     <div className="min-h-screen flex flex-col bg-light">
