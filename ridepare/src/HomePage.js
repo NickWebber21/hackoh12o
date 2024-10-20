@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaMapMarkerAlt, FaRoute, FaExchangeAlt, FaCar, FaSpinner } from 'react-icons/fa';
 import { Autocomplete } from '@react-google-maps/api';
+import axios from 'axios';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
@@ -11,18 +12,30 @@ function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      const mockResults = {
-        uber: { price: 25.50, distance: "10 km", duration: "15 mins" },
-        lyft: { price: 23.75, distance: "10 km", duration: "15 mins" },
-        startLocation: { lat: 40.7128, lng: -74.0060 },
-        endLocation: { lat: 40.7484, lng: -73.9857 }
-      };
+    try {
+      const response = await axios.post('http://localhost:5000/compare', {
+        startLocation: startingPoint,
+        endLocation: destination
+      });
+
+      const results = response.data;
       setIsLoading(false);
-      navigate('/results', { state: { results: mockResults } });
-    }, 1500);
+      navigate('/results', {
+        state: {
+          results: {
+            ...results,
+            startLocation: { lat: 0, lng: 0 }, // Replace with actual coordinates if available
+            endLocation: { lat: 0, lng: 0 } // Replace with actual coordinates if available
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching ride comparison:', error);
+      setIsLoading(false);
+      // Handle the error appropriately, maybe show an error message to the user
+    }
   };
 
   const swapLocations = () => {
@@ -72,10 +85,12 @@ function HomePage() {
 
             <button
               onClick={handleClick}
+              disabled={!startingPoint || !destination}
               className="w-full bg-accent text-white text-lg font-semibold py-4 px-6 rounded-lg
                          hover:bg-secondary transition-all duration-300 ease-in-out
                          focus:outline-none focus:ring-4 focus:ring-accent focus:ring-opacity-50
-                         flex items-center justify-center"
+                         flex items-center justify-center
+                         disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <FaSpinner className="animate-spin-slow mr-2" />

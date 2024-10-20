@@ -26,3 +26,7 @@ npm install react-leaflet leaflet
 
 ## autocomplete
 npm install @react-google-maps/api
+
+## backend
+npm install axios
+npm install react-leaflet leaflet
