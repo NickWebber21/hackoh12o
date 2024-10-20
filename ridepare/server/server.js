@@ -9,11 +9,11 @@ require('dotenv').config();
 
 // Define a root route
 app.get('/', (req, res) => {
-  res.send('Welcome to the RidePare API!'); // Respond with a simple message
+  res.send('Welcome to the RidePare API!');
 });
 
 app.get('/compare', (req, res) => {
-  res.send('Please use a POST request to compare prices'); // Respond with a simple message
+  res.send('Please use a POST request to compare prices');
 });
 
 // Define a POST endpoint to compare prices
@@ -21,29 +21,47 @@ app.post('/compare', async (req, res) => {
   const { startLocation, endLocation } = req.body;
 
   try {
-    // Make a request to the Google Distance Matrix API
-    const distanceMatrixResponse = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json', {
+    // Make a request to the Google Distance Matrix API for car route
+    const carResponse = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json', {
       params: {
         origins: startLocation,
         destinations: endLocation,
+        mode: 'driving',
         key: process.env.REACT_APP_GOOGLE_API_KEY,
       },
     });
 
-    const distanceText = distanceMatrixResponse.data.rows[0].elements[0].distance.text;
-    const durationText = distanceMatrixResponse.data.rows[0].elements[0].duration.text;
+    // Make a request to the Google Distance Matrix API for bicycling route (for Lime scooter and CitiBike)
+    const bikeResponse = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json', {
+      params: {
+        origins: startLocation,
+        destinations: endLocation,
+        mode: 'bicycling',
+        key: process.env.REACT_APP_GOOGLE_API_KEY,
+      },
+    });
 
-    // Extract the numeric values from distance and duration (e.g., "10 km" -> 10, "30 mins" -> 30)
-    const distance = parseFloat(distanceText); // Assuming distance is in kilometers/miles
-    const duration = parseFloat(durationText); // Assuming duration is in minutes
+    const carDistanceText = carResponse.data.rows[0].elements[0].distance.text;
+    const carDurationText = carResponse.data.rows[0].elements[0].duration.text;
+    const bikeDistanceText = bikeResponse.data.rows[0].elements[0].distance.text;
+    const bikeDurationText = bikeResponse.data.rows[0].elements[0].duration.text;
 
-    // Calculate Uber and Lyft prices
-    const uberPrice = calculateUberPrice(distance, duration);
-    const lyftPrice = calculateLyftPrice(distance, duration);
+    const carDistance = parseFloat(carDistanceText);
+    const carDuration = parseFloat(carDurationText);
+    const bikeDistance = parseFloat(bikeDistanceText);
+    const bikeDuration = parseFloat(bikeDurationText);
+
+    // Calculate prices
+    const uberPrice = calculateUberPrice(carDistance, carDuration);
+    const lyftPrice = calculateLyftPrice(carDistance, carDuration);
+    const limePrice = calculateLimePrice(bikeDistance, bikeDuration);
+    const citiBikePrice = calculateCitiBikePrice(bikeDuration);
 
     res.json({
-      uber: { price: uberPrice, distance: distanceText, duration: durationText },
-      lyft: { price: lyftPrice, distance: distanceText, duration: durationText },
+      uber: { price: uberPrice, distance: carDistanceText, duration: carDurationText },
+      lyft: { price: lyftPrice, distance: carDistanceText, duration: carDurationText },
+      lime: { price: limePrice, distance: bikeDistanceText, duration: bikeDurationText },
+      citiBike: { price: citiBikePrice, distance: bikeDistanceText, duration: bikeDurationText },
       startLocation: startLocation,
       endLocation: endLocation
     });
@@ -54,27 +72,47 @@ app.post('/compare', async (req, res) => {
 });
 
 const calculateUberPrice = (distance, duration) => {
-  const baseFare = 2.50;   // Base fare in dollars
-  const costPerMinute = 0.20; // Cost per minute in dollars
-  const costPerDistance = 1.50; // Cost per mile/km in dollars
-  const bookingFee = 1.75;   // Booking fee in dollars
+  const baseFare = 2.50;
+  const costPerMinute = 0.20;
+  const costPerDistance = 1.50;
+  const bookingFee = 1.75;
 
-  // Basic fare calculation
   const price = baseFare + (costPerMinute * duration) + (costPerDistance * distance) + bookingFee;
-
-  return price; // Return the price rounded to 2 decimal places
+  return Number(price.toFixed(2));
 };
 
 const calculateLyftPrice = (distance, duration) => {
-  const baseFare = 2.00;   // Base fare in dollars
-  const costPerMinute = 0.18; // Cost per minute in dollars
-  const costPerDistance = 1.40; // Cost per mile/km in dollars
-  const bookingFee = 1.50;   // Booking fee in dollars
+  const baseFare = 2.00;
+  const costPerMinute = 0.18;
+  const costPerDistance = 1.40;
+  const bookingFee = 1.50;
 
-  // Basic fare calculation
   const price = baseFare + (costPerMinute * duration) + (costPerDistance * distance) + bookingFee;
+  return Number(price.toFixed(2));
+};
 
-  return price; // Return the price rounded to 2 decimal places
+const calculateLimePrice = (distance, duration) => {
+  const unlockFee = 1.00;
+  const costPerMinute = 0.15;
+  const costPerMile = 0.39; // Assuming the distance is in miles. Adjust if it's in kilometers.
+  const price = unlockFee + (costPerMinute * duration) + (costPerMile * distance);
+  return Number(price.toFixed(2));
+};
+
+const calculateCitiBikePrice = (duration) => {
+  // CitiBike pricing: $3.50 for a single ride up to 30 minutes
+  // $0.15 per minute after that
+  const basePrice = 3.50;
+  const baseDuration = 30;
+  const costPerAdditionalMinute = 0.15;
+
+  if (duration <= baseDuration) {
+    return basePrice;
+  } else {
+    const additionalMinutes = duration - baseDuration;
+    const price = basePrice + (additionalMinutes * costPerAdditionalMinute);
+    return Number(price.toFixed(2));
+  }
 };
 
 const PORT = process.env.PORT || 5000;
