@@ -12,7 +12,9 @@ function ResultsPage() {
   const location = useLocation();
   const { results } = location.state || {};
 
-  if (!results) {
+  console.log('Results:', results);  // Add this line for debugging
+
+  if (!results || !results.startLocation || !results.endLocation) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-light">
         <h1 className="text-2xl font-bold text-primary mb-4">No results available</h1>
@@ -26,6 +28,9 @@ function ResultsPage() {
 
   const startPosition = [results.startLocation.lat, results.startLocation.lng];
   const endPosition = [results.endLocation.lat, results.endLocation.lng];
+
+  console.log('Start Position:', startPosition);  // Add this line for debugging
+  console.log('End Position:', endPosition);  // Add this line for debugging
 
   return (
     <div className="min-h-screen flex flex-col bg-light">
@@ -49,7 +54,7 @@ function ResultsPage() {
                 <div className="rounded-lg overflow-hidden shadow-md">
                   <MapContainer
                     center={startPosition}
-                    zoom={13}
+                    zoom={12}
                     style={{ height: '400px', width: '100%' }}
                   >
                     <TileLayer
@@ -87,7 +92,7 @@ function ResultField({ label, result, icon }) {
         <h2 className="text-2xl font-semibold text-primary">{label}</h2>
       </div>
       <div className="grid grid-cols-3 gap-4">
-        <InfoItem icon={<FaCar />} label="Price" value={`$${result.price}`} />
+        <InfoItem icon={<FaCar />} label="Price" value={`$${result.price.toFixed(2)}`} />
         <InfoItem icon={<FaRoad />} label="Distance" value={result.distance} />
         <InfoItem icon={<FaClock />} label="Duration" value={result.duration} />
       </div>
