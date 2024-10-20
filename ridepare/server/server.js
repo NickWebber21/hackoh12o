@@ -12,8 +12,8 @@ app.get('/', (req, res) => {
   res.send('Welcome to the RidePare API!'); // Respond with a simple message
 });
 
-app.get('/compare',(req, res) => {
-  res.send('Please use a POST request to compare prices'); // Respond with a simple message))
+app.get('/compare', (req, res) => {
+  res.send('Please use a POST request to compare prices'); // Respond with a simple message
 });
 
 // Define a POST endpoint to compare prices
@@ -30,16 +30,20 @@ app.post('/compare', async (req, res) => {
       },
     });
 
-    const distance = distanceMatrixResponse.data.rows[0].elements[0].distance.text;
-    const duration = distanceMatrixResponse.data.rows[0].elements[0].duration.text;
+    const distanceText = distanceMatrixResponse.data.rows[0].elements[0].distance.text;
+    const durationText = distanceMatrixResponse.data.rows[0].elements[0].duration.text;
 
-    // Example price calculation logic based on distance and duration
+    // Extract the numeric values from distance and duration (e.g., "10 km" -> 10, "30 mins" -> 30)
+    const distance = parseFloat(distanceText); // Assuming distance is in kilometers/miles
+    const duration = parseFloat(durationText); // Assuming duration is in minutes
+
+    // Calculate Uber and Lyft prices
     const uberPrice = calculateUberPrice(distance, duration);
     const lyftPrice = calculateLyftPrice(distance, duration);
 
     res.json({
-      uber: { price: uberPrice, distance, duration },
-      lyft: { price: lyftPrice, distance, duration },
+      uber: { price: uberPrice, distance: distanceText, duration: durationText },
+      lyft: { price: lyftPrice, distance: distanceText, duration: durationText },
       startLocation: startLocation,
       endLocation: endLocation
     });
@@ -49,13 +53,28 @@ app.post('/compare', async (req, res) => {
   }
 });
 
-// Dummy price calculation functions
-const calculateUberPrice = (start, end) => {
-  return 12; // Random price for demo
+const calculateUberPrice = (distance, duration) => {
+  const baseFare = 2.50;   // Base fare in dollars
+  const costPerMinute = 0.20; // Cost per minute in dollars
+  const costPerDistance = 1.50; // Cost per mile/km in dollars
+  const bookingFee = 1.75;   // Booking fee in dollars
+
+  // Basic fare calculation
+  const price = baseFare + (costPerMinute * duration) + (costPerDistance * distance) + bookingFee;
+
+  return price; // Return the price rounded to 2 decimal places
 };
 
-const calculateLyftPrice = (start, end) => {
-  return 12; // Random price for demo
+const calculateLyftPrice = (distance, duration) => {
+  const baseFare = 2.00;   // Base fare in dollars
+  const costPerMinute = 0.18; // Cost per minute in dollars
+  const costPerDistance = 1.40; // Cost per mile/km in dollars
+  const bookingFee = 1.50;   // Booking fee in dollars
+
+  // Basic fare calculation
+  const price = baseFare + (costPerMinute * duration) + (costPerDistance * distance) + bookingFee;
+
+  return price; // Return the price rounded to 2 decimal places
 };
 
 const PORT = process.env.PORT || 5000;
