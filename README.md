@@ -8,25 +8,25 @@ code on that thang
 4. `npm install express`
 5. `npm install axios`
 6. `npm install concurrently --save-dev`
-7. `cd ridepare`
-8. run both react frontend and express backend concurrently `npm run dev`
-7. `npm start` to run the app in development mode `npm test` to run the app in test mode `npm run build` to build the app for production `npm run eject` to eject the app
+7. clone the repository `git clone https://github.com/NickWebber21/hackoh12o.git`
+8. `cd ridepare`
+9. run both react frontend and express backend concurrently `npm run dev`
+10. `CTRL + C` to stop the app
+    
 - to view the app in your browser, open [http://localhost:3000](http://localhost:3000)
 
 
-## maybe
-npm install postcss-cli autoprefixer
-npm install postcss-cli autoprefixer --save-dev
-npm install react-router-dom
-npm install react-icons
-npm install @tailwindcss/forms @tailwindcss/aspect-ratio @tailwindcss/line-clamp
+# dependencies
+## general
+`npm install postcss-cli autoprefixer`
+`npm install postcss-cli autoprefixer --save-dev`
+`npm install react-router-dom`
+`npm install react-icons`
+`npm install @tailwindcss/forms @tailwindcss/aspect-ratio @tailwindcss/line-clamp`
 
-## map stuff
-npm install react-leaflet leaflet
+## map api
+`npm install react-leaflet leaflet`
 
-## autocomplete
-npm install @react-google-maps/api
+## autocomplete api
+`npm install @react-google-maps/api`
 
-## backend
-npm install axios
-npm install react-leaflet leaflet
