@@ -22,7 +22,7 @@ function convertDurationToMinutes(durationText) {
 
   const daysMatch = durationText.match(/(\d+)\s*day/);
   const hoursMatch = durationText.match(/(\d+)\s*hour/);
-  const minutesMatch = durationText.match(/(\d+)\s*minute/);
+  const minutesMatch = durationText.match(/(\d+)\s*mins/);
 
   if (daysMatch) {
     totalMinutes += parseInt(daysMatch[1]) * 24 * 60;
@@ -80,7 +80,7 @@ app.post('/compare', async (req, res) => {
     const carDuration = convertDurationToMinutes(carDurationText);
     const bikeDistance = convertDistanceToFloat(bikeDistanceText);
     const bikeDuration = convertDurationToMinutes(bikeDurationText);
-    console.log(carDuration);
+
     // Calculate prices
     const uberPrice = calculateUberPrice(carDistance, carDuration);
     const lyftPrice = calculateLyftPrice(carDistance, carDuration);
