@@ -53,26 +53,40 @@ app.post('/compare', async (req, res) => {
   }
 });
 
+
+
 const calculateUberPrice = (distance, duration) => {
-  const baseFare = 2.50;   // Base fare in dollars
-  const costPerMinute = 0.20; // Cost per minute in dollars
-  const costPerDistance = 1.50; // Cost per mile/km in dollars
-  const bookingFee = 1.75;   // Booking fee in dollars
+  const baseFare = 2.50;           // Base fare in dollars for UberX
+  const costPerMinute = 0.23;      // Cost per minute in dollars
+  const costPerDistance = 1.40;     // Cost per mile/km in dollars
+  const bookingFee = 2.20;          // Booking fee in dollars
+  const minFare = 7.50;             // Minimum fare in dollars
 
   // Basic fare calculation
-  const price = baseFare + (costPerMinute * duration) + (costPerDistance * distance) + bookingFee;
+  let price = baseFare + (costPerMinute * duration) + (costPerDistance * distance) + bookingFee;
 
-  return price; // Return the price rounded to 2 decimal places
+  // Ensure the minimum fare is applied
+  if (price < minFare) {
+    price = minFare;
+  }
+  // Return the price rounded to 2 decimal places
+  return price;
 };
 
 const calculateLyftPrice = (distance, duration) => {
   const baseFare = 2.00;   // Base fare in dollars
-  const costPerMinute = 0.18; // Cost per minute in dollars
-  const costPerDistance = 1.40; // Cost per mile/km in dollars
-  const bookingFee = 1.50;   // Booking fee in dollars
+  const costPerMinute = 0.2; // Cost per minute in dollars
+  const costPerDistance = 1.50; // Cost per mile/km in dollars
+  const bookingFee = 1.75;   // Booking fee in dollars
+  const minFare = 6.00; //min fare
 
   // Basic fare calculation
   const price = baseFare + (costPerMinute * duration) + (costPerDistance * distance) + bookingFee;
+
+
+  if (price < minFare) {
+    price = minFare;
+  }
 
   return price; // Return the price rounded to 2 decimal places
 };
