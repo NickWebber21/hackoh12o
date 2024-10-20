@@ -87,7 +87,7 @@ function ResultField({ label, result, icon }) {
         <h2 className="text-2xl font-semibold text-primary">{label}</h2>
       </div>
       <div className="grid grid-cols-3 gap-4">
-        <InfoItem icon={<FaCar />} label="Price" value={`$${result.price}`} />
+        <InfoItem icon={<FaCar />} label="Price" value={`$${result.price.toFixed(2)}`} />
         <InfoItem icon={<FaRoad />} label="Distance" value={result.distance} />
         <InfoItem icon={<FaClock />} label="Duration" value={result.duration} />
       </div>

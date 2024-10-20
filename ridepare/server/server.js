@@ -17,7 +17,7 @@ app.get('/compare',(req, res) => {
 });
 
 // Define a POST endpoint to compare prices
-app.post('/compare', async  (req, res) => {
+app.post('/compare', async (req, res) => {
   const { startLocation, endLocation } = req.body;
 
   try {
@@ -29,12 +29,9 @@ app.post('/compare', async  (req, res) => {
         key: process.env.REACT_APP_GOOGLE_API_KEY,
       },
     });
-    console.log(process.env.REACT_APP_GOOGLE_API_KEY);
-    console.log('Distance Matrix API Response:', distanceMatrixResponse.data);
 
-
-    const distance = distanceMatrixResponse.data.rows[0].elements[0].distance.text; // e.g., "12.3 km"
-    const duration = distanceMatrixResponse.data.rows[0].elements[0].duration.text; // e.g., "15 mins"
+    const distance = distanceMatrixResponse.data.rows[0].elements[0].distance.text;
+    const duration = distanceMatrixResponse.data.rows[0].elements[0].duration.text;
 
     // Example price calculation logic based on distance and duration
     const uberPrice = calculateUberPrice(distance, duration);
@@ -43,6 +40,8 @@ app.post('/compare', async  (req, res) => {
     res.json({
       uber: { price: uberPrice, distance, duration },
       lyft: { price: lyftPrice, distance, duration },
+      startLocation: startLocation,
+      endLocation: endLocation
     });
   } catch (error) {
     console.error('Error fetching data from Google Distance Matrix API:', error);
