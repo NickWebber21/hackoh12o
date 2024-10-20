@@ -1,7 +1,8 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { FaUber, FaCar, FaClock, FaRoad, FaArrowLeft } from 'react-icons/fa';
+import { FaUber, FaCar, FaClock, FaRoad, FaArrowLeft, FaBicycle } from 'react-icons/fa';
 import { SiLyft } from 'react-icons/si';
+import { GiKickScooter } from 'react-icons/gi';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -12,9 +13,7 @@ function ResultsPage() {
   const location = useLocation();
   const { results } = location.state || {};
 
-  console.log('Results:', results);  // Add this line for debugging
-
-  if (!results || !results.startLocation || !results.endLocation) {
+  if (!results) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-light">
         <h1 className="text-2xl font-bold text-primary mb-4">No results available</h1>
@@ -28,9 +27,6 @@ function ResultsPage() {
 
   const startPosition = [results.startLocation.lat, results.startLocation.lng];
   const endPosition = [results.endLocation.lat, results.endLocation.lng];
-
-  console.log('Start Position:', startPosition);  // Add this line for debugging
-  console.log('End Position:', endPosition);  // Add this line for debugging
 
   return (
     <div className="min-h-screen flex flex-col bg-light">
@@ -46,6 +42,8 @@ function ResultsPage() {
                 <div className="space-y-6">
                   <ResultField label="Uber" result={results.uber} icon={<FaUber />} />
                   <ResultField label="Lyft" result={results.lyft} icon={<SiLyft />} />
+                  <ResultField label="Lime" result={results.lime} icon={<GiKickScooter />} />
+                  <ResultField label="CitiBike" result={results.citiBike} icon={<FaBicycle />} />
                 </div>
               </div>
 
